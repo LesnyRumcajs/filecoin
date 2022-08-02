@@ -1,0 +1,11 @@
+[package]
+name = "fvm_dummy_imports"
+description = "stub functions to satisfy FVM SDK externs for non-WASM builds"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+fvm_shared = { version = "0.8.0" }
