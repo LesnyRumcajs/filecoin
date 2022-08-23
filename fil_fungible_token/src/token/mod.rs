@@ -113,27 +113,39 @@ where
         initial_owner: &Address,
         amount: &TokenAmount,
         data: &RawBytes,
-    ) -> Result<()> {
+    //) -> Result<()> {
+        ) -> Result<TokenReceivedParams> {
         let amount = validate_amount(amount, "mint", self.granularity)?;
         // init the operator account so that its actor ID can be referenced in the receiver hook
         let operator_id = self.resolve_or_init(operator)?;
         // init the owner account as allowance and balance checks are not performed for minting
         let owner_id = self.resolve_or_init(initial_owner)?;
 
-        let old_state = self.state.clone();
+        // state save/revert will be managed outside of this function
+        //let old_state = self.state.clone();
 
         // Increase the balance of the actor and increase total supply
+        // todo: probably don't need transaction thing here, the entire minting+receiver hook operation belongs in one
         self.transaction(|state, bs| {
             state.change_balance_by(&bs, owner_id, amount)?;
             state.change_supply_by(amount)?;
             Ok(())
         })?;
 
+        // return the params we'll send to the receiver hook
+        Ok(TokenReceivedParams {
+            operator: operator_id,
+            from: self.msg.actor_id(),
+            to: owner_id,
+            amount: amount.clone(),
+            data: data.clone(),
+        })
+
         // Update state so re-entrant calls see the changes
-        self.flush()?;
+        //self.flush()?;
 
         // Call receiver hook
-        self.call_receiver_hook_or_revert(
+        /*self.call_receiver_hook_or_revert(
             initial_owner,
             TokenReceivedParams {
                 data: data.clone(),
@@ -143,7 +155,7 @@ where
                 amount: amount.clone(),
             },
             old_state,
-        )
+        )*/
     }
 
     /// Gets the total number of tokens in existence
@@ -571,6 +583,39 @@ where
             abort_code => {
                 *self.state = old_state;
                 self.flush()?;
+                Err(TokenError::ReceiverHook {
+                    from: params.from,
+                    to: params.to,
+                    operator: params.operator,
+                    amount: params.amount,
+                    exit_code: abort_code,
+                })
+            }
+        }
+    }
+
+    /// Calls the receiver hook, do not revert on error
+    /// Error results from this should be handled upstream
+    pub fn call_receiver_hook(
+        &mut self,
+        token_receiver: &Address,
+        params: TokenReceivedParams,
+    ) -> Result<()> {
+        let receipt = match self.msg.send(
+            token_receiver,
+            RECEIVER_HOOK_METHOD_NUM,
+            &RawBytes::serialize(&params)?,
+            &TokenAmount::zero(),
+        ) {
+            Ok(receipt) => receipt,
+            Err(e) => {
+                return Err(e.into());
+            }
+        };
+
+        match receipt.exit_code {
+            ExitCode::OK => Ok(()),
+            abort_code => {
                 Err(TokenError::ReceiverHook {
                     from: params.from,
                     to: params.to,
