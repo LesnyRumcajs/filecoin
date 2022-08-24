@@ -813,6 +813,27 @@ mod test {
     }
 
     #[test]
+    fn mint_params() {
+        let bs = MemoryBlockstore::new();
+        let mut token_state = Token::<_, FakeMessenger>::create_state(&bs).unwrap();
+        let mut token = new_token(bs, &mut token_state);
+
+        assert_eq!(token.balance_of(TREASURY).unwrap(), TokenAmount::zero());
+        let params = token
+            .mint(TOKEN_ACTOR, TREASURY, &TokenAmount::from(1_000_000), &Default::default())
+            .unwrap();
+        println!("receiver  params: {:#?}", params);
+        let param_bytes = fvm_ipld_encoding::RawBytes::serialize(&params).unwrap();
+        println!("receiver params bytes: {:?}", param_bytes);
+        let recovered_params = param_bytes.deserialize::<TokenReceivedParams>().unwrap();
+        println!("recovered params: {:#?}", recovered_params);
+
+        let rekt_bytes = fvm_ipld_encoding::RawBytes::new(vec![133, 24, 100, 25, 39, 16, 25, 39, 26, 66, 0, 100, 64]);
+        let rekt_params = rekt_bytes.deserialize::<TokenReceivedParams>().unwrap();
+        println!("rekt params: {:#?}", rekt_params);
+    }
+
+    #[test]
     fn it_mints() {
         let bs = MemoryBlockstore::new();
         let mut token_state = Token::<_, FakeMessenger>::create_state(&bs).unwrap();
