@@ -88,6 +88,7 @@ fn mint_tokens() {
     let ret_val = call_method(minter[0].1, actor_address, method_hash!("Mint"), Some(params));
     println!("mint return data {:#?}", &ret_val);
     let return_data = ret_val.msg_receipt.return_data;
+    println!("blockstore contents: {:?}", blockstore);
     let mint_result: MintReturn = return_data.deserialize().unwrap();
     println!(
         "minted {:?} with total supply of {:?}",
