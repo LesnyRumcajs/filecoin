@@ -73,7 +73,8 @@ fn invoke(id: u32) -> u32 {
             let bytes = fvm_ipld_encoding::to_vec(&receipt).unwrap();
             sdk::ipld::put_block(DAG_CBOR, bytes.as_slice()).unwrap()
         },
-        "Alternate" => {
+        // 2740353640
+        "Hackier" => {
             let params = sdk::message::params_raw(id).unwrap().1;
             let params = RawBytes::new(params);
             let params = params.deserialize::<CreateFrc42ParamsAlternate>().unwrap();
