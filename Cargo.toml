@@ -10,5 +10,7 @@ members = [
     "fil_fungible_token",
     "testing/fil_token_integration",
     "testing/fil_token_integration/actors/basic_token_actor",
-    "testing/fil_token_integration/actors/basic_receiving_actor"
+    "testing/fil_token_integration/actors/basic_receiving_actor",
+    "testing/actor_factory",
+    "testing/actor_factory/actors/factory_actor"
 ]
