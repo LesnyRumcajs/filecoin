@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 base64 = "0.13.0"
 cid = { version = "0.8.3", default-features = false, features = ["serde-codec"] }
+fil_fungible_token = { path = "../../../../fil_fungible_token" }
 frc42_dispatch = { path = "../../../../frc42_dispatch" }
 fvm_ipld_blockstore = "0.1.1"
 fvm_ipld_encoding = "0.2.2"
