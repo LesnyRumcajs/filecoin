@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+base64 = "0.13.0"
 cid = { version = "0.8.3", default-features = false, features = ["serde-codec"] }
 frc42_dispatch = { path = "../../../../frc42_dispatch" }
 fvm_ipld_blockstore = "0.1.1"

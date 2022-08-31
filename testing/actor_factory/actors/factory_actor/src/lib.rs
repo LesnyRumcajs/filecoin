@@ -18,14 +18,6 @@ pub fn deserialize_params<O: DeserializeOwned>(params: u32) -> O {
 }
 
 #[derive(Serialize_tuple, Deserialize_tuple)]
-pub struct CreateFrc42Params {
-    pub constructor_params: RawBytes,
-    /// ideally we'd pass the code cid directly in rather than an actor-instance's address but the ref-fvm integration test
-    /// doesn't expose the code cid to us
-    pub code_cid: Cid,
-}
-
-#[derive(Serialize_tuple, Deserialize_tuple)]
 pub struct CreateFrc42ParamsAlternate {
     pub constructor_params: RawBytes,
     /// ideally we'd pass the code cid directly in rather than an actor-instance's address but the ref-fvm integration test
@@ -64,12 +56,10 @@ fn invoke(id: u32) -> u32 {
             // this is a stateless actor so constructor does nothing
             NO_DATA_BLOCK_ID
         },
+        // 684873438
         "CreateFrc42Token" => {
             let params = sdk::message::params_raw(id).unwrap().1;
-            let params = RawBytes::new(params);
-            let params = params.deserialize::<CreateFrc42Params>().unwrap();
-
-            let receipt = create_actor(params);
+            let receipt = create_actor(params.into()).unwrap();
             let bytes = fvm_ipld_encoding::to_vec(&receipt).unwrap();
             sdk::ipld::put_block(DAG_CBOR, bytes.as_slice()).unwrap()
         },
@@ -92,15 +82,8 @@ fn invoke(id: u32) -> u32 {
     })
 }
 
-fn create_actor(params: CreateFrc42Params) -> Result<CreateFrc42Return, String> {
-    // message the builtin-init actor to create a new actor
-    let init_actor_exec_params =
-        ExecParams { code_cid: params.code_cid, constructor_params: params.constructor_params };
-    let bytes = match fvm_ipld_encoding::to_vec(&init_actor_exec_params) {
-        Ok(bytes) => bytes,
-        Err(e) => return Err(format!("Failed to serialize init actor exec params {}", e)),
-    };
-    let receipt = match sdk::send::send(&Address::new_id(1), 2, bytes.into(), TokenAmount::zero()) {
+fn create_actor(params: RawBytes) -> Result<CreateFrc42Return, String> {
+    let receipt = match sdk::send::send(&Address::new_id(1), 2, params, TokenAmount::zero()) {
         Ok(rec) => {
             if !rec.exit_code.is_success() {
                 return Err(format!("Failed calling exec on init actor {:#?}", rec));
