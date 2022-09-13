@@ -84,8 +84,8 @@ fn create_accounts(accounts: u8, token_amount: u8) -> u32 {
     NO_DATA_BLOCK_ID
 }
 
-/// make 100 transfer groups evenly distributed amongst the accounts
-const TRANSFER_GROUPS: u64 = 100;
+/// make 10 transfer groups evenly distributed amongst the accounts
+const TRANSFER_GROUPS: u64 = 10;
 
 fn make_transfers(accounts: u8, token_amount: u8) -> u32 {
     let num_accounts = match accounts {

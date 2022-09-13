@@ -30,9 +30,6 @@ fn benchmark_hamt() {
         (0x3, 0x1),
         (0x3, 0x2),
         (0x3, 0x3),
-        (0x4, 0x1),
-        (0x4, 0x2),
-        (0x4, 0x3),
     ];
 
     for test_case in test_vectors {
@@ -85,14 +82,14 @@ fn benchmark_hamt() {
 
         // Construct the token actor
         let ret_val = call_method(actor[0].1, actor_address, method_hash!("Constructor"), None);
-        println!("token actor constructor return data: {:?}", &ret_val);
+        // println!("token actor constructor return data: {:?}", &ret_val);
 
         let method_number =
             u64::from_le_bytes([test_case.0, test_case.1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
         // Create the accounts in the balance hamt
         let ret_val = call_method(actor[0].1, actor_address, method_number, None);
-        println!("creating_balances {:?}", &ret_val);
+        // println!("creating_balances {:?}", &ret_val);
 
         let method_number =
             u64::from_le_bytes([test_case.0, test_case.1, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00]);
