@@ -20,6 +20,7 @@ test-coverage: install-toolchain
 		--exclude greeter \
 		--exclude fil_token_integration_tests \
 		--exclude basic_token_actor \
+		--exclude benchmark_actor \
 		--exclude basic_receiving_actor \
 		--exclude basic_nft_actor
 

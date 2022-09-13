@@ -17,7 +17,7 @@ use fvm_shared::econ::TokenAmount;
 use fvm_shared::ActorID;
 use thiserror::Error;
 
-const HAMT_BIT_WIDTH: u32 = 5;
+const HAMT_BIT_WIDTH: u32 = 1;
 
 #[derive(Error, Debug)]
 pub enum StateError {

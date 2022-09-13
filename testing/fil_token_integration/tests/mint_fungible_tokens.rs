@@ -105,3 +105,65 @@ fn mint_tokens() {
     let balance: TokenAmount = return_data.deserialize().unwrap();
     println!("balance: {:?}", balance);
 }
+
+#[test]
+fn benchmark_hamt() {
+    let blockstore = MemoryBlockstore::default();
+    let bundle_root = bundle::import_bundle(&blockstore, actors_v10::BUNDLE_CAR).unwrap();
+    let mut tester =
+        Tester::new(NetworkVersion::V15, StateTreeVersion::V4, bundle_root, blockstore.clone())
+            .unwrap();
+
+    let actor_address = Address::new_id(u64::MAX);
+
+    let actor: [Account; 1] = tester.create_accounts().unwrap();
+
+    // Get wasm bin
+    let wasm_path =
+        env::current_dir().unwrap().join(BASIC_TOKEN_ACTOR_WASM).canonicalize().unwrap();
+    let wasm_bin = std::fs::read(wasm_path).expect("Unable to read token actor file");
+
+    // Set actor state
+    let actor_state = TokenState::new(&blockstore).unwrap(); // TODO: this should probably not be exported from the package
+    let state_cid = tester.set_state(&actor_state).unwrap();
+
+    tester.set_actor_from_bin(&wasm_bin, state_cid, actor_address, TokenAmount::zero()).unwrap();
+
+    // Instantiate machine
+    tester.instantiate_machine(DummyExterns).unwrap();
+
+    // Helper to simplify sending messages
+    let mut sequence = 0u64;
+    let mut call_method = |from, to, method_num, params| {
+        let message = Message {
+            from,
+            to,
+            gas_limit: i64::MAX,
+            method_num,
+            sequence,
+            params: if let Some(params) = params { params } else { RawBytes::default() },
+            ..Message::default()
+        };
+        sequence += 1;
+        tester
+            .executor
+            .as_mut()
+            .unwrap()
+            .execute_message(message, ApplyKind::Explicit, 100)
+            .unwrap()
+    };
+
+    // Construct the token actor
+    let ret_val = call_method(actor[0].1, actor_address, method_hash!("Constructor"), None);
+    println!("token actor constructor return data: {:#?}", &ret_val);
+
+    // Create the accounts in the balance hamt
+    let ret_val = call_method(actor[0].1, actor_address, 2, None);
+    println!("creating_balances {:#?}", &ret_val);
+
+    // Simulate transfers
+    let ret_val = call_method(actor[0].1, actor_address, 3, None);
+    println!("simulating_transfers {:#?}", &ret_val);
+
+    println!("Gas used {}", ret_val.msg_receipt.gas_used);
+}

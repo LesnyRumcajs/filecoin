@@ -17,6 +17,7 @@ fvm_shared = { version = "2.0.0-alpha.2" }
 
 [dev-dependencies]
 basic_token_actor = {path = "actors/basic_token_actor"}
+benchmark_actor = {path = "actors/benchmark_actor"}
 basic_receiving_actor = {path = "actors/basic_receiving_actor"}
 basic_nft_actor = {path = "actors/basic_nft_actor"}
 actors-v10 = { package = "fil_builtin_actors_bundle", git = "https://github.com/filecoin-project/builtin-actors", branch = "next", features = ["m2-native"] }
