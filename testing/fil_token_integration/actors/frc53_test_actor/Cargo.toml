@@ -2,6 +2,7 @@
 name = "frc53_test_actor"
 version = "0.1.0"
 edition = "2021"
+publish = false
 
 [dependencies]
 frc46_token = { path = "../../../../frc46_token" }
@@ -17,5 +18,5 @@ fvm_shared = "~3.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_tuple = { version = "0.5.0" }
 
-[build-dependencies]
-wasm-builder = "3.0"
+[lib]
+crate-type = ["cdylib"] ## cdylib is necessary for Wasm build

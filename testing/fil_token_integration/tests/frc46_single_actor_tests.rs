@@ -11,10 +11,9 @@ use common::{construct_tester, TestHelpers};
 use frc46_test_actor::{action, ActionParams, TestAction};
 use token_impl::ConstructorParams;
 
-const FACTORY_TOKEN_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/frc46_factory_token/frc46_factory_token.compact.wasm";
-const TEST_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/frc46_test_actor/frc46_test_actor.compact.wasm";
+use fil_token_integration_test_actors::wasm_bin::{
+    FRC46_FACTORY_TOKEN_WASM as FACTORY_TOKEN_ACTOR_WASM, FRC46_TEST_ACTOR_WASM as TEST_ACTOR_WASM,
+};
 
 /// This covers several simpler tests, which all involve a single receiving actor
 /// They're combined because these integration tests take a long time to build and run

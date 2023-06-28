@@ -8,10 +8,9 @@ mod common;
 use common::frc53_nft_helpers::{MintParams, NFTHelper};
 use common::{construct_tester, TestHelpers};
 
-const BASIC_NFT_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_nft_actor/basic_nft_actor.compact.wasm";
-const BASIC_RECEIVER_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_receiving_actor/basic_receiving_actor.compact.wasm";
+use fil_token_integration_test_actors::wasm_bin::{
+    BASIC_NFT_ACTOR_WASM, BASIC_RECEIVER_ACTOR_WASM,
+};
 
 #[test]
 fn test_nft_actor() {

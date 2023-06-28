@@ -17,10 +17,9 @@ use fvm_shared::message::Message;
 use fvm_shared::state::StateTreeVersion;
 use fvm_shared::version::NetworkVersion;
 
-const BASIC_TOKEN_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_token_actor/basic_token_actor.compact.wasm";
-const BASIC_RECEIVER_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_receiving_actor/basic_receiving_actor.compact.wasm";
+use fil_token_integration_test_actors::wasm_bin::{
+    BASIC_NFT_ACTOR_WASM, BASIC_RECEIVER_ACTOR_WASM,
+};
 
 #[test]
 fn it_mints_tokens() {

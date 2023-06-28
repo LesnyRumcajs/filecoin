@@ -13,12 +13,9 @@ mod common;
 use common::frc46_token_helpers::TokenHelper;
 use common::{construct_tester, TestHelpers};
 
-const BASIC_TOKEN_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_token_actor/basic_token_actor.compact.wasm";
-const BASIC_TRANSFER_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_transfer_actor/basic_transfer_actor.compact.wasm";
-const BASIC_RECEIVER_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_receiving_actor/basic_receiving_actor.compact.wasm";
+use fil_token_integration_test_actors::wasm_bin::{
+    BASIC_RECEIVER_ACTOR_WASM, BASIC_TOKEN_ACTOR_WASM, BASIC_TRANSFER_ACTOR_WASM,
+};
 
 #[derive(Serialize_tuple, Deserialize_tuple)]
 struct TransferActorState {

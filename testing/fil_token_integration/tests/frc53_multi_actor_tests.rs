@@ -11,10 +11,9 @@ use common::frc53_nft_helpers::{MintParams, NFTHelper};
 use common::{construct_tester, TestHelpers};
 use frc53_test_actor::{action, ActionParams, TestAction};
 
-const BASIC_NFT_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/basic_nft_actor/basic_nft_actor.compact.wasm";
-const TEST_ACTOR_WASM: &str =
-    "../../target/debug/wbuild/frc53_test_actor/frc53_test_actor.compact.wasm";
+use fil_token_integration_test_actors::wasm_bin::{
+    BASIC_NFT_ACTOR_WASM, FRC53_TEST_ACTOR_WASM as TEST_ACTOR_WASM,
+};
 
 fn action_params(token_address: Address, action: TestAction) -> RawBytes {
     RawBytes::serialize(ActionParams { token_address, action }).unwrap()
